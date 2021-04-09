@@ -144,6 +144,7 @@ func (l *Lexer) readIdentifier() string {
 
 func (l *Lexer) readNumber() (string, token.TokenType) {
 	position := l.position
+	var t token.TokenType = token.INT
 	for isDigit(l.ch) {
 		l.readChar()
 	}
@@ -152,10 +153,27 @@ func (l *Lexer) readNumber() (string, token.TokenType) {
 		for isDigit(l.ch) { // read rest numbers
 			l.readChar()
 		}
-		return l.input[position:l.position], token.FLOAT
+		t = token.FLOAT
 	} else {
-		return l.input[position:l.position], token.INT
+		t = token.INT
 	}
+
+	if l.ch == 'e' {
+		t = token.FLOAT
+		tmp := l.position
+		l.readChar() // read 'e'
+		prefix := "e"
+		if l.ch == '-' {
+			l.readChar() // read '-'
+			prefix += "-"
+		}
+		v, _ := l.readNumber()
+		return l.input[position:tmp] + prefix + v, t
+	} else {
+		t = token.INT
+	}
+
+	return l.input[position:l.position], t
 }
 
 func (l *Lexer) readString() string {
