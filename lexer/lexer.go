@@ -69,6 +69,7 @@ func (l *Lexer) NextToken() token.Token {
 			l.readChar()
 			tok.Literal, tok.Type = l.readNumber()
 			tok.Literal = string(ch) + tok.Literal
+			return tok // skip readChar() in the bottom
 		} else {
 			tok = newToken(token.MINUS, l.ch)
 		}
