@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"tgifer/commands"
 	"tgifer/lexer"
 	"tgifer/parser"
 )
 
-func Start(in io.Reader, out io.Writer) {
+func Start(in io.Reader, out io.Writer, args []string) {
 	scanner := bufio.NewScanner(in)
 	var s = ""
 	for {
@@ -23,11 +24,21 @@ func Start(in io.Reader, out io.Writer) {
 	p := parser.New(l)
 	program := p.ParseProgram()
 
-	bytes, err := json.MarshalIndent(program, "", " ")
-	if err != nil {
-		fmt.Println(err)
+	if len(args) == 0 {
+		bytes, err := json.MarshalIndent(program, "", " ")
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(string(bytes))
+		return
 	}
-	fmt.Println(string(bytes))
+
+	if args[0] == "strings" {
+		ret := commands.GetStrings(program)
+		for _, r := range ret {
+			fmt.Println(r)
+		}
+	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {

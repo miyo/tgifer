@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	repl.Start(os.Stdin, os.Stdout)
+	repl.Start(os.Stdin, os.Stdout, os.Args[1:])
 }
